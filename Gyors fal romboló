@@ -34,14 +34,12 @@ if (document.URL.match("screen=am_farm")) {
     var link = "https://" + window.location.host + "/game.php?" + sitter + "village=";
     function getPage(i, pages) {
         if (i < pages) {
-        console.log(i, "siker");
             var url = link + game_data.village.id + "&order=" + "distance" + "&dir=" + "asc" + "&Farm_page=" + i + "&screen=am_farm";
             $.ajax({
                 type: 'GET',
                 url: url,
                 dataType: "html",
                 success: function(data) {
-                console.log(data);
                     $('#plunder_list tr', data).slice(2).each(function() {
                         $('#plunder_list tr:last').after("<tr>" + $(this).html() + "</tr>");
                     });
@@ -119,7 +117,6 @@ if (document.URL.match("screen=place")) {
         function addCoords() {
             var val = sessionStorage.getItem("coords");
             var coord = JSON.parse(val).coords[0];
-            console.log(coord, "kordi");
             var x = coord.split("|")[0];
             var y = coord.split("|")[1];
 
@@ -131,7 +128,6 @@ if (document.URL.match("screen=place")) {
             $("input[name*='spy']").val(kem);
 
             var array = JSON.parse(val).coords;
-            console.log(array);
             array.shift();
             storeCoords(array);
             console.log(array, "list");
