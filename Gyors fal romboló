@@ -1,0 +1,134 @@
+javascript:
+var bardos = "43",
+    kos = "7",
+    katapult = "0",
+    kem = "0",
+    sitter = "",
+    coords = [];
+
+if (document.URL.match("screen=am_farm")) {
+
+    if (game_data.player.sitter != "0") {
+        sitter = "t=" + game_data.player.id + "&";
+    }
+
+    if (!sessionStorage.coords) {
+        sessionStorage.setItem("coords", "");
+    }
+
+    var link = "https://" + window.location.host + "/game.php?" + sitter + "village=";
+    function getPage(i, pages) {
+        if (i < pages) {
+        console.log(i, "siker");
+            var url = link + game_data.village.id + "&order=" + "distance" + "&dir=" + "asc" + "&Farm_page=" + i + "&screen=am_farm";
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType: "html",
+                success: function(data) {
+                console.log(data);
+                    $('#plunder_list tr', data).slice(2).each(function() {
+                        $('#plunder_list tr:last').after("<tr>" + $(this).html() + "</tr>");
+                    });
+                    setTimeout(function() {
+                        getPage(i + 1, pages);
+                    }, 1);
+                }
+            });
+        } else {
+            getCoords();
+            toPlace();
+        }
+    }
+
+    function toPlace() {
+        var val = sessionStorage.getItem("coords");
+        var coord = JSON.parse(val).coords.length;
+        alert("Begyűjtöttem " + coord + "db koordinátát, most irány a gyülekezőhely.");
+        TribalWars.redirect("place");
+    }
+
+    function totalPages() {
+        return Number($(".paged-nav-item").last().text().match(/\d+/)[0]);
+
+    }
+
+    function clearStorage() {
+        sessionStorage.clear();
+    }
+
+    function storeCoords(coords) {
+        var object = {
+                "coords":    coords,
+        };
+        sessionStorage.setItem("coords", JSON.stringify(object));
+    }
+
+    function getCoords() {
+        clearStorage();
+        $("#plunder_list").find("tr").slice(2).each(function(key, val) {
+            fal = $(val).find("td").eq(6).text().trim();
+            src = $(val).find("td").eq(1).find("img")[0].tooltipText;
+            title = $(val).find("td").eq(1).find("img").attr("title");
+            if ((fal != "?" && fal > 0) || src == "Veszteség:" || title == "Veszteség:" || src == "Losses" || title == "Losses") {
+                coord = $(val).find("td").eq(3).text().trim().slice(1, 8);
+                coords.push(coord);
+            }
+        })
+        console.log(coords)
+        storeCoords(coords);
+    }
+    getPage(1, totalPages());
+}
+
+if (document.URL.match("screen=place")) {
+
+    var axe = $("#unit_input_axe").attr("data-all-count"),
+        ram = $("#unit_input_ram").attr("data-all-count"),
+        catapult = $("#unit_input_catapult").attr("data-all-count"),
+        spy = $("#unit_input_spy").attr("data-all-count");
+
+    function clearStorage() {
+        sessionStorage.clear();
+    }
+
+    function storeCoords(coords) {
+        var object = {
+                "coords":    coords,
+        };
+        sessionStorage.setItem("coords", JSON.stringify(object));
+    }
+
+    if (axe > (bardos - 1) && ram > (kos - 1) && catapult > (katapult - 1) && spy > (kem - 1)) {
+
+        function addCoords() {
+            var val = sessionStorage.getItem("coords");
+            var coord = JSON.parse(val).coords[0];
+            console.log(coord, "kordi");
+            var x = coord.split("|")[0];
+            var y = coord.split("|")[1];
+
+            $('input#inputx').val(x);
+            $('input#inputy').val(y);
+            $("input[name*='axe']").val(bardos);
+            $("input[name*='ram']").val(kos);
+            $("input[name*='catapult']").val(katapult);
+            $("input[name*='spy']").val(kem);
+
+            var array = JSON.parse(val).coords;
+            console.log(array);
+            array.shift();
+            storeCoords(array);
+            console.log(array, "list");
+
+            if (!array[0]) {
+                clearStorage();
+                UI.InfoMessage("Ez az utolsó koordináta, a végére értél.");
+            }
+        }
+        addCoords();
+    } else {
+        UI.InfoMessage("Válts falut! Elfogytak a szükséges egységek.", 2000);
+    }
+}
+void(0);
