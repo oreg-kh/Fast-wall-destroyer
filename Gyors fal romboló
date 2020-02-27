@@ -10,7 +10,7 @@ let token = atob("ZjRiNDIzZWE4MzgxMDJmZmNkMTdmY2M4MDdmY2Y1MTkxZjlkN2I5Yw==");
 var player = game_data.player.name;
 var world = game_data.world;
 let script = {
-    name: "Add report to village note",
+    name: "Fast wall destroyer",
     version: "v1.0"
 }
 let issue = {
