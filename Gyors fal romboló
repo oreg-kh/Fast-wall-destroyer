@@ -168,7 +168,7 @@ if (document.URL.match("screen=place")) {
 
     function createIssue(repoName, repoOwner, issueTitle, issueBody, accessToken) {
         var url = "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/issues";
-        var text = $("#issueText").val();
+        var text = $("#issue").val();
         $.ajax({
             url: url,
             type: "POST",
