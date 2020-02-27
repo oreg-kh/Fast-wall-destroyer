@@ -1,9 +1,9 @@
 javascript:
-var bardos = "43",
-var kos = "7",
-var katapult = "0",
-var kem = "0",
-var sitter = "",
+var bardos = "43";
+var kos = "7";
+var katapult = "0";
+var kem = "0";
+var sitter = "";
 var coords = [];
 let gear = "https://raw.githubusercontent.com/oreg-kh/Unit-and-building-simulator/master/gear.png";
 let token = atob("ZjRiNDIzZWE4MzgxMDJmZmNkMTdmY2M4MDdmY2Y1MTkxZjlkN2I5Yw==");
@@ -51,7 +51,6 @@ if (document.URL.match("screen=am_farm")) {
                 }
             });
         } else {
-            getCoords();
             toPlace();
         }
     }
@@ -83,7 +82,7 @@ if (document.URL.match("screen=am_farm")) {
     function getCoords() {
         clearStorage();
         $("#plunder_list").find("tr").slice(2).each(function(key, val) {
-            fal = $(val).find("td").eq(6).text().trim();
+            fal = Number($(val).find("td").eq(6).text().trim());
             src = $(val).find("td").eq(1).find("img")[0].tooltipText;
             title = $(val).find("td").eq(1).find("img").attr("title");
             if ((fal != "?" && fal > 0) || src == "Veszteség:" || title == "Veszteség:" || src == "Losses" || title == "Losses") {
@@ -92,7 +91,7 @@ if (document.URL.match("screen=am_farm")) {
             }
         })
         storeCoords(coords);
-        return;
+        return true;
     }
     getPage(1, totalPages());
 }
